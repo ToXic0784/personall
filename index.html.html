@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUSHAR OS — Personal Digital Command Center</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0B0B0D',
+                        cardBg: '#151519',
+                        cardHover: '#1D1D24',
+                        goldAccent: '#C6A15B',
+                        goldHover: '#D4AF37',
+                        goldLight: '#F3E5AB'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0B0B0D; }
+        ::-webkit-scrollbar-thumb { background: #2A2A35; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #C6A15B; }
+        .glass-panel { background: rgba(21, 21, 25, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(198, 161, 91, 0.15); }
+        .gold-glow { box-shadow: 0 0 25px rgba(198, 161, 91, 0.15); }
+        .gold-border { border-color: rgba(198, 161, 91, 0.3); }
+    </style>
+</head>
+<body class="bg-darkBg text-gray-100 min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <header class="md:hidden flex items-center justify-between px-4 py-3 bg-cardBg border-b gold-border sticky top-0 z-40">
+        <div class="flex items-center space-x-3">
+            <div id="mobileAvatarHeader" class="w-9 h-9 rounded-xl bg-gradient-to-br from-goldAccent to-yellow-700 flex items-center justify-center text-darkBg font-bold text-lg shadow-md overflow-hidden">
+                T
+            </div>
+            <div>
+                <h1 class="font-bold text-sm tracking-wide text-goldAccent">TUSHAR OS</h1>
+                <p id="mobileGreetingHeader" class="text-[10px] text-gray-400">Loading...</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-3">
+            <button onclick="openModal('globalSearchModal')" class="p-2 text-gray-300 hover:text-goldAccent bg-darkBg/50 rounded-lg border gold-border">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+            <button onclick="switchTab('notifications')" class="relative p-2 text-gray-300 hover:text-goldAccent bg-darkBg/50 rounded-lg border gold-border">
+                <i class="fa-solid fa-bell"></i>
+                <span id="mobileNotifBadge" class="absolute -top-1 -right-1 w-2 h-2 bg-goldAccent rounded-full animate-pulse hidden"></span>
+            </button>
+        </div>
+    </header>
+
+    <aside class="hidden md:flex flex-col w-64 bg-cardBg border-r gold-border h-screen sticky top-0 z-30 select-none">
+        <div class="p-6 border-b gold-border flex items-center space-x-3">
+            <div id="desktopAvatarHeader" class="w-10 h-10 rounded-xl bg-gradient-to-br from-goldAccent to-yellow-700 flex items-center justify-center text-darkBg font-extrabold text-xl shadow-lg gold-glow overflow-hidden">
+                T
+            </div>
+            <div>
+                <h1 class="font-bold text-base tracking-wider text-goldAccent">TUSHAR OS</h1>
+                <p id="desktopGreetingHeader" class="text-xs text-gray-400">Loading...</p>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto px-4 py-4 space-y-1">
+            <p class="text-[11px] font-semibold text-gray-500 uppercase px-3 mb-2 tracking-wider">Workspace</p>
+            <a onclick="switchTab('home')" id="nav-home" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-goldAccent bg-goldAccent/10 border gold-border cursor-pointer">
+                <i class="fa-solid fa-house w-5 text-center"></i>
+                <span>Home Dashboard</span>
+            </a>
+            <a onclick="switchTab('analytics')" id="nav-analytics" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-300 hover:bg-darkBg hover:text-goldAccent cursor-pointer">
+                <i class="fa-solid fa-chart-pie w-5 text-center"></i>
+                <span>Analytics & Data</span>
+            </a>
+            <a onclick="switchTab('apps')" id="nav-apps" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-300 hover:bg-darkBg hover:text-goldAccent cursor-pointer">
+                <i class="fa-solid fa-grid-2 w-5 text-center"></i>
+                <span>App Launcher</span>
+            </a>
+            <a onclick="switchTab('study')" id="nav-study" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-300 hover:bg-darkBg hover:text-goldAccent cursor-pointer">
+                <i class="fa-solid fa-graduation-cap w-5 text-center"></i>
+                <span>Study & AI Test OS</span>
+            </a>
+            <a onclick="switchTab('tuition')" id="nav-tuition" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-300 hover:bg-darkBg hover:text-goldAccent cursor-pointer">
+                <i class="fa-solid fa-chalkboard-user w-5 text-center"></i>
+                <span>Tuition Manager</span>
+            </a>
+            <a onclick="switchTab('money')" id="nav-money" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-300 hover:bg-darkBg hover:text-goldAccent cursor-pointer">
+                <i class="fa-solid fa-wallet w-5 text-center"></i>
+                <span>Money & Finance</span>
+            </a>
+            <a onclick="switchTab('routine')" id="nav-routine" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-300 hover:bg-darkBg hover:text-goldAccent cursor-pointer">
+                <i class="fa-solid fa-calendar-days w-5 text-center"></i>
+                <span>Routine & Habits</span>
+            </a>
+            <a onclick="switchTab('tasks')" id="nav-tasks" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-300 hover:bg-darkBg hover:text-goldAccent cursor-pointer">
+                <i class="fa-solid fa-circle-check w-5 text-center"></i>
+                <span>Task Manager</span>
+            </a>
+            <a onclick="switchTab('files')" id="nav-files" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-300 hover:bg-darkBg hover:text-goldAccent cursor-pointer">
+                <i class="fa-solid fa-folder-open w-5 text-center"></i>
+                <span>File Manager</span>
+            </a>
+
+            <p class="text-[11px] font-semibold text-gray-500 uppercase px-3 mt-5 mb-2 tracking-wider">System</p>
+            <a onclick="switchTab('notifications')" id="nav-notifications" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-300 hover:bg-darkBg hover:text-goldAccent cursor-pointer">
+                <i class="fa-solid fa-bell w-5 text-center"></i>
+                <span>Notifications</span>
+            </a>
+            <a onclick="switchTab('profile')" id="nav-profile" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-300 hover:bg-darkBg hover:text-goldAccent cursor-pointer">
+                <i class="fa-solid fa-user-shield w-5 text-center"></i>
+                <span>Profile & ID</span>
+            </a>
+            <a onclick="switchTab('settings')" id="nav-settings" class="nav-link flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-gray-300 hover:bg-darkBg hover:text-goldAccent cursor-pointer">
+                <i class="fa-solid fa-gear w-5 text-center"></i>
+                <span>OS Settings</span>
+            </a>
+        </div>
+
+        <div class="p-4 border-t gold-border bg-darkBg/50 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <span id="syncIndicator" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                <span id="syncStatusText" class="text-xs text-gray-400 font-medium">Synced</span>
+            </div>
+            <button onclick="openModal('globalSearchModal')" class="p-2 text-gray-400 hover:text-goldAccent transition-colors">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-h-screen pb-20 md:pb-0">
+        <header class="hidden md:flex items-center justify-between px-8 py-4 bg-cardBg/80 backdrop-blur border-b gold-border sticky top-0 z-20">
+            <div class="flex items-center space-x-4">
+                <h2 id="desktopTitle" class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                    <span>Home Dashboard</span>
+                </h2>
+            </div>
+            <div class="flex items-center space-x-6">
+                <div class="text-right">
+                    <div id="liveClock" class="text-sm font-semibold text-goldAccent">00:00:00 AM</div>
+                    <div id="liveDate" class="text-xs text-gray-400">Loading Date...</div>
+                </div>
+                <div class="h-8 w-[1px] bg-gray-800"></div>
+                <div class="flex items-center space-x-3">
+                    <div id="headerUserAvatar" class="w-9 h-9 rounded-full bg-goldAccent/10 border gold-border flex items-center justify-center text-goldAccent font-bold text-sm overflow-hidden">
+                        TK
+                    </div>
+                    <div>
+                        <div id="headerUserName" class="text-xs font-bold text-white">Tushar Kumar Swarnkar</div>
+                        <div id="headerUserTitle" class="text-[10px] text-gray-400">Student & Tutor</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div id="contentArea" class="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto">
+            <!-- Dynamic Module Content -->
+        </div>
+    </main>
+
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-cardBg/90 backdrop-blur-lg border-t gold-border flex justify-around items-center py-2 px-3 z-40 shadow-2xl">
+        <button onclick="switchTab('home')" class="mobile-nav-btn flex flex-col items-center text-goldAccent py-1 px-3" data-tab="home">
+            <i class="fa-solid fa-house text-lg"></i>
+            <span class="text-[10px] mt-1 font-medium">Home</span>
+        </button>
+        <button onclick="switchTab('analytics')" class="mobile-nav-btn flex flex-col items-center text-gray-400 hover:text-goldAccent py-1 px-3" data-tab="analytics">
+            <i class="fa-solid fa-chart-pie text-lg"></i>
+            <span class="text-[10px] mt-1 font-medium">Data</span>
+        </button>
+        <button onclick="switchTab('apps')" class="mobile-nav-btn flex flex-col items-center text-gray-400 hover:text-goldAccent py-1 px-3" data-tab="apps">
+            <i class="fa-solid fa-grid-2 text-lg"></i>
+            <span class="text-[10px] mt-1 font-medium">Apps</span>
+        </button>
+        <button onclick="openModal('globalSearchModal')" class="flex flex-col items-center text-gray-400 hover:text-goldAccent py-1 px-3">
+            <i class="fa-solid fa-magnifying-glass text-lg"></i>
+            <span class="text-[10px] mt-1 font-medium">Search</span>
+        </button>
+        <button onclick="switchTab('profile')" class="mobile-nav-btn flex flex-col items-center text-gray-400 hover:text-goldAccent py-1 px-3" data-tab="profile">
+            <i class="fa-solid fa-user-shield text-lg"></i>
+            <span class="text-[10px] mt-1 font-medium">Profile</span>
+        </button>
+    </nav>
+
+    <div id="globalSearchModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-start justify-center pt-20 px-4">
+        <div class="bg-cardBg border gold-border rounded-2xl max-w-xl w-full p-6 shadow-2xl glass-panel">
+            <div class="flex items-center justify-between pb-4 border-b gold-border mb-4">
+                <div class="flex items-center space-x-3 w-full">
+                    <i class="fa-solid fa-magnifying-glass text-goldAccent text-lg"></i>
+                    <input type="text" id="globalSearchInput" oninput="handleGlobalSearch(this.value)" placeholder="Search tasks, students, notes, transactions..." class="bg-transparent text-white placeholder-gray-500 w-full focus:outline-none text-base">
+                </div>
+                <button onclick="closeModal('globalSearchModal')" class="text-gray-400 hover:text-white p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div id="globalSearchResults" class="space-y-2 max-h-96 overflow-y-auto">
+                <p class="text-xs text-gray-500 text-center py-6">Type anything to search across Tushar OS...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const inspirationalThoughts = [
+            "“Success is not final; failure is not fatal: It is the courage to continue that counts.” — Winston Churchill",
+            "“Your time is limited, so don’t waste it living someone else’s life.” — Steve Jobs",
+            "“Consistency is what transforms averages into excellence. Keep pushing forward!”",
+            "“Education is the most powerful weapon which you can use to change the world.” — Nelson Mandela",
+            "“Discipline is choosing between what you want now and what you want most.” — Abraham Lincoln",
+            "“Small daily improvements over time lead to stunning results.” — Robin Sharma",
+            "“Believe you can and you're halfway there.” — Theodore Roosevelt"
+        ];
+
+        const defaultState = {
+            user: {
+                name: "Tushar Kumar Swarnkar",
+                title: "Student & Private Tutor",
+                education: "Graduation B.Tech / Degree (2023-2027)",
+                skills: "JavaScript, Python, Web Development, Mathematics, Advanced Physics",
+                goals: "Master software engineering, excel in private tuitions, and build financial freedom.",
+                avatar: ""
+            },
+            settings: {
+                theme: "Gold",
+                securityPin: "1234",
+                syncMode: "Synced"
+            },
+            study: {
+                currentSem: "Semester 4",
+                streak: 16,
+                totalStudyHours: 54.5,
+                bookmarkPage: 14,
+                subjects: [
+                    { id: 1, name: "Data Structures & Algorithms", code: "CS201", sem: "Sem 4", progress: 85, examDate: "2026-05-15", notesCount: 14, revision: "Done" },
+                    { id: 2, name: "Database Management Systems", code: "CS202", sem: "Sem 4", progress: 70, examDate: "2026-05-18", notesCount: 9, revision: "Pending" },
+                    { id: 3, name: "Operating Systems", code: "CS203", sem: "Sem 4", progress: 60, examDate: "2026-05-22", notesCount: 11, revision: "In Progress" }
+                ],
+                notes: [
+                    { id: 1, subject: "Data Structures", title: "Binary Search Trees & AVL Trees", date: "2026-03-28", content: "Balanced BST ensures O(log n) search time complexity. Rotations like LL, RR, LR, RL maintain balance.", pdfName: "BST_Notes.pdf" },
+                    { id: 2, subject: "DBMS", title: "Normalization & SQL Joins", date: "2026-03-25", content: "1NF, 2NF, 3NF and BCNF rules for relational databases to eliminate data redundancy and anomalies.", pdfName: "DBMS_Normalization.pdf" }
+                ],
+                testResults: []
+            },
+            tuition: {
+                students: [
+                    { id: 1, name: "Kunal Gupta", parentName: "Rajesh Gupta", class: "Class 10", school: "DAV Public", batch: "Batch C", phone: "9876543210", feeStatus: "Paid", monthlyFee: 1200, dueDate: "2026-04-10", paymentHistory: [{ date: "2026-03-05", amount: 1200, method: "UPI / Online", status: "Paid" }] },
+                    { id: 2, name: "Sneha Roy", parentName: "Anil Roy", class: "Class 8", school: "St. Xavier's", batch: "Batch B", phone: "9123456789", feeStatus: "Pending", monthlyFee: 1000, dueDate: "2026-04-05", paymentHistory: [{ date: "2026-02-05", amount: 1000, method: "Cash", status: "Paid" }] },
+                    { id: 3, name: "Amit Kumar", parentName: "Suresh Kumar", class: "Class 6", school: "Kendriya Vidyalaya", batch: "Batch A", phone: "9988776655", feeStatus: "Paid", monthlyFee: 800, dueDate: "2026-04-10", paymentHistory: [{ date: "2026-03-05", amount: 800, method: "UPI / Online", status: "Paid" }] }
+                ]
+            },
+            money: {
+                transactions: [
+                    { id: 1, title: "Tuition Fees Collection (March)", type: "income", category: "Tuition", amount: 15500, date: "2026-03-30" },
+                    { id: 2, title: "Private Coding Project Income", type: "income", category: "Freelance", amount: 8000, date: "2026-04-01" },
+                    { id: 3, title: "Room Rent & Utilities", type: "expense", category: "Living", amount: 5000, date: "2026-04-02" },
+                    { id: 4, title: "Books & Study Material", type: "expense", category: "Education", amount: 1200, date: "2026-03-28" }
+                ]
+            },
+            routine: {
+                timeline: [
+                    { id: 1, time: "05:30 AM", task: "Wake up & Fresh up", type: "routine" },
+                    { id: 2, time: "06:00 AM", task: "Morning Workout & Meditation", type: "fitness" },
+                    { id: 3, time: "08:00 AM", task: "Graduation Study & Core Coding", type: "study" },
+                    { id: 4, time: "12:00 PM", task: "Lunch & Rest", type: "routine" },
+                    { id: 5, time: "02:30 PM", task: "Tuition Batches (Session 1 & 2)", type: "work" },
+                    { id: 6, time: "05:30 PM", task: "Tuition Batches (Session 3)", type: "work" },
+                    { id: 7, time: "10:30 PM", task: "Sleep & Recovery", type: "rest" }
+                ],
+                habits: [
+                    { id: 1, name: "Morning Study", streak: 16, completedToday: true },
+                    { id: 2, name: "Workout / Fitness", streak: 10, completedToday: true },
+                    { id: 3, name: "Drink 3L Water", streak: 24, completedToday: false },
+                    { id: 4, name: "Read 10 Pages", streak: 7, completedToday: true }
+                ]
+            },
+            tasks: [
+                { id: 1, title: "Complete Data Structures Assignment 3", category: "Study", priority: "High", date: "2026-04-03", completed: false },
+                { id: 2, title: "Prepare notes for Batch C Math Class", category: "Tuition", priority: "High", date: "2026-04-03", completed: true },
+                { id: 3, title: "Collect pending tuition fees from Sneha Roy", category: "Tuition", priority: "High", date: "2026-04-05", completed: false }
+            ],
+            files: [
+                { id: 1, name: "Study Notes (Sem 4).pdf", folder: "Study", size: "4.2 MB", date: "2026-03-20" },
+                { id: 2, name: "Tuition Batch Timetable.xlsx", folder: "Tuition", size: "850 KB", date: "2026-03-15" },
+                { id: 3, name: "Tushar_ID_Certificate.pdf", folder: "Documents", size: "1.8 MB", date: "2026-01-10" }
+            ],
+            notifications: [
+                { id: 1, title: "Tuition Fee Due Reminder", message: "Today is 5th! Time to review and collect pending tuition fees.", time: "1 hour ago", read: false }
+            ]
+        };
+
+        let tusharState = JSON.parse(localStorage.getItem('TUSHAR_OS_STATE')) || defaultState;
+
+        function checkMonthlyFeeAlert() {
+            const today = new Date();
+            if (today.getDate() === 5) {
+                const alreadyNotifiedToday = tusharState.notifications.some(n => n.title.includes("Monthly Fee Collection") && n.time.includes("Today"));
+                if (!alreadyNotifiedToday) {
+                    tusharState.notifications.unshift({
+                        id: Date.now(),
+                        title: "🔔 Monthly Fee Collection Alert (5th)",
+                        message: "It's the 5th of the month! Automated reminder to check student payment statuses and collect tuition fees.",
+                        time: "Today",
+                        read: false
+                    });
+                    saveState();
+                }
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('TUSHAR_OS_STATE', JSON.stringify(tusharState));
+            updateNotificationBadge();
+        }
+
+        function getDynamicGreeting() {
+            const hour = new Date().getHours();
+            if (hour < 12) return "Good Morning, Tushar ❤️";
+            if (hour < 17) return "Good Afternoon, Tushar ❤️";
+            return "Good Evening, Tushar ❤️";
+        }
+
+        function getDailyThought() {
+            const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+            return inspirationalThoughts[dayOfYear % inspirationalThoughts.length];
+        }
+
+        function startClock() {
+            setInterval(() => {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString();
+                const dateString = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
+                const clockEl = document.getElementById('liveClock');
+                const dateEl = document.getElementById('liveDate');
+                if (clockEl) clockEl.innerText = timeString;
+                if (dateEl) dateEl.innerText = dateString;
+            }, 1000);
+
+            const greeting = getDynamicGreeting();
+            const mGreeting = document.getElementById('mobileGreetingHeader');
+            const dGreeting = document.getElementById('desktopGreetingHeader');
+            if(mGreeting) mGreeting.innerText = greeting;
+            if(dGreeting) dGreeting.innerText = greeting;
+
+            const nameEl = document.getElementById('headerUserName');
+            const titleEl = document.getElementById('headerUserTitle');
+            if(nameEl) nameEl.innerText = tusharState.user.name;
+            if(titleEl) titleEl.innerText = tusharState.user.title;
+
+            updateAvatars();
+        }
+
+        function updateAvatars() {
+            const avatars = [document.getElementById('mobileAvatarHeader'), document.getElementById('desktopAvatarHeader'), document.getElementById('headerUserAvatar')];
+            avatars.forEach(av => {
+                if(av) {
+                    if(tusharState.user.avatar) {
+                        av.innerHTML = `<img src="${tusharState.user.avatar}" class="w-full h-full object-cover">`;
+                    } else {
+                        av.innerHTML = `TK`;
+                    }
+                }
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const borderColor = type === 'success' ? 'border-emerald-500 text-emerald-400' : 'border-goldAccent text-goldAccent';
+            toast.className = `glass-panel px-4 py-3 rounded-xl border ${borderColor} text-sm font-medium shadow-xl flex items-center space-x-3 transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-triangle-exclamation'}"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 50);
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        let activeTab = 'home';
+        function switchTab(tabName) {
+            activeTab = tabName;
+            document.querySelectorAll('.nav-link').forEach(el => {
+                el.classList.remove('text-goldAccent', 'bg-goldAccent/10', 'border', 'gold-border');
+                el.classList.add('text-gray-300', 'hover:bg-darkBg', 'hover:text-goldAccent');
+            });
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            if (activeNav) {
+                activeNav.classList.remove('text-gray-300', 'hover:bg-darkBg', 'hover:text-goldAccent');
+                activeNav.classList.add('text-goldAccent', 'bg-goldAccent/10', 'border', 'gold-border');
+            }
+
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                if(btn.dataset.tab === tabName) {
+                    btn.classList.add('text-goldAccent');
+                    btn.classList.remove('text-gray-400');
+                } else {
+                    btn.classList.remove('text-goldAccent');
+                    btn.classList.add('text-gray-400');
+                }
+            });
+
+            const titles = {
+                home: "Home Dashboard",
+                analytics: "Analytics & Improvement Data",
+                apps: "App Launcher",
+                study: "Study & AI Test OS",
+                tuition: "Tuition Manager",
+                money: "Money & Finance",
+                routine: "Routine & Habits",
+                tasks: "Task Manager",
+                files: "Universal File Manager",
+                notifications: "Notification Center",
+                profile: "Profile & Personal ID",
+                settings: "OS Settings"
+            };
+            const desktopTitle = document.getElementById('desktopTitle');
+            if(desktopTitle) desktopTitle.innerHTML = `<span>${titles[tabName] || 'Dashboard'}</span>`;
+
+            renderTabContent(tabName);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderTabContent(tab) {
+            const container = document.getElementById('contentArea');
+            switch(tab) {
+                case 'home': container.innerHTML = renderHomeHTML(); break;
+                case 'analytics': container.innerHTML = renderAnalyticsHTML(); break;
+                case 'apps': container.innerHTML = renderAppsHTML(); break;
+                case 'study': container.innerHTML = renderStudyHTML(); break;
+                case 'tuition': container.innerHTML = renderTuitionHTML(); break;
+                case 'money': container.innerHTML = renderMoneyHTML(); break;
+                case 'routine': container.innerHTML = renderRoutineHTML(); break;
+                case 'tasks': container.innerHTML = renderTasksHTML(); break;
+                case 'files': container.innerHTML = renderFilesHTML(); break;
+                case 'notifications': container.innerHTML = renderNotificationsHTML(); break;
+                case 'profile': container.innerHTML = renderProfileHTML(); break;
+                case 'settings': container.innerHTML = renderSettingsHTML(); break;
+                default: container.innerHTML = renderHomeHTML();
+            }
+        }
+
+        function renderHomeHTML() {
+            const pendingTasksCount = tusharState.tasks.filter(t => !t.completed).length;
+            const totalIncome = tusharState.money.transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
+            const totalExpense = tusharState.money.transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
+            const savings = totalIncome - totalExpense;
+            const greeting = getDynamicGreeting();
+            const thought = getDailyThought();
+
+            return `
+                <div class="space-y-6">
+                    <div class="glass-panel p-6 md:p-8 rounded-3xl relative overflow-hidden gold-glow">
+                        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-goldAccent/10 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="relative z-10 space-y-4">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <div>
+                                    <span class="px-3 py-1 bg-goldAccent/20 text-goldAccent text-xs font-semibold rounded-full border gold-border">${greeting}</span>
+                                    <h2 class="text-2xl md:text-4xl font-extrabold text-white mt-2">TUSHAR OS Command Center</h2>
+                                    <p class="text-gray-400 text-sm mt-1">Your unified digital workspace for study, tuitions, finances, and life.</p>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <button onclick="switchTab('study')" class="px-5 py-2.5 bg-goldAccent text-darkBg font-bold rounded-xl shadow-lg hover:bg-goldHover transition-all flex items-center gap-2">
+                                        <i class="fa-solid fa-graduation-cap"></i> AI Test & Study
+                                    </button>
+                                    <button onclick="switchTab('analytics')" class="px-5 py-2.5 bg-cardBg text-white font-semibold rounded-xl border gold-border hover:bg-darkBg transition-all flex items-center gap-2">
+                                        <i class="fa-solid fa-chart-pie"></i> View Analytics
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-darkBg/60 rounded-2xl border gold-border flex items-start space-x-3">
+                                <i class="fa-solid fa-quote-left text-goldAccent text-xl mt-0.5"></i>
+                                <div>
+                                    <p class="text-xs italic text-gray-300 font-medium">${thought}</p>
+                                    <span class="text-[10px] text-goldAccent mt-1 block font-semibold">— Daily Inspiring Thought</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="glass-panel p-5 rounded-2xl border gold-border">
+                            <div class="flex items-center justify-between text-goldAccent mb-2">
+                                <i class="fa-solid fa-graduation-cap text-xl"></i>
+                                <span class="text-xs bg-goldAccent/10 px-2 py-0.5 rounded text-goldAccent">Streak ${tusharState.study.streak}d</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white">${tusharState.study.totalStudyHours}h</h3>
+                            <p class="text-xs text-gray-400 mt-1">Total Study Tracked</p>
+                        </div>
+                        <div class="glass-panel p-5 rounded-2xl border gold-border">
+                            <div class="flex items-center justify-between text-blue-400 mb-2">
+                                <i class="fa-solid fa-chalkboard-user text-xl"></i>
+                                <span class="text-xs bg-blue-500/10 px-2 py-0.5 rounded text-blue-400">Active</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white">${tusharState.tuition.students.length} Students</h3>
+                            <p class="text-xs text-gray-400 mt-1">Tuition Management</p>
+                        </div>
+                        <div class="glass-panel p-5 rounded-2xl border gold-border">
+                            <div class="flex items-center justify-between text-emerald-400 mb-2">
+                                <i class="fa-solid fa-wallet text-xl"></i>
+                                <span class="text-xs bg-emerald-500/10 px-2 py-0.5 rounded text-emerald-400">Net Savings</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white">₹${savings.toLocaleString()}</h3>
+                            <p class="text-xs text-gray-400 mt-1">Income: ₹${totalIncome.toLocaleString()}</p>
+                        </div>
+                        <div class="glass-panel p-5 rounded-2xl border gold-border">
+                            <div class="flex items-center justify-between text-amber-400 mb-2">
+                                <i class="fa-solid fa-circle-check text-xl"></i>
+                                <span class="text-xs bg-amber-500/10 px-2 py-0.5 rounded text-amber-400">Pending</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white">${pendingTasksCount} Tasks</h3>
+                            <p class="text-xs text-gray-400 mt-1">Requires Attention</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 glass-panel p-6 rounded-2xl">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-bold text-lg text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-list-check text-goldAccent"></i> Today's Priority Tasks
+                                </h3>
+                                <button onclick="switchTab('tasks')" class="text-xs text-goldAccent hover:underline">View All</button>
+                            </div>
+                            <div class="space-y-3">
+                                ${tusharState.tasks.slice(0, 4).map(task => `
+                                    <div class="flex items-center justify-between p-3.5 bg-darkBg/60 rounded-xl border ${task.completed ? 'border-gray-800 opacity-60' : 'gold-border'}">
+                                        <div class="flex items-center space-x-3">
+                                            <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})" class="w-4 h-4 rounded text-goldAccent focus:ring-goldAccent bg-cardBg border-gray-700 cursor-pointer">
+                                            <div>
+                                                <p class="text-sm font-medium ${task.completed ? 'line-through text-gray-500' : 'text-white'}">${task.title}</p>
+                                                <span class="text-[10px] px-2 py-0.5 bg-goldAccent/10 text-goldAccent rounded mt-1 inline-block">${task.category}</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-xs text-gray-400">${task.date}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-lg text-white flex items-center gap-2 mb-4">
+                                    <i class="fa-solid fa-bolt text-goldAccent"></i> Quick Launcher
+                                </h3>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button onclick="switchTab('study')" class="p-3 bg-darkBg/60 hover:bg-goldAccent/10 border gold-border rounded-xl text-left transition-all group">
+                                        <i class="fa-solid fa-graduation-cap text-goldAccent text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                                        <div class="text-xs font-bold text-white">Study & AI Test</div>
+                                    </button>
+                                    <button onclick="switchTab('tuition')" class="p-3 bg-darkBg/60 hover:bg-goldAccent/10 border gold-border rounded-xl text-left transition-all group">
+                                        <i class="fa-solid fa-chalkboard-user text-goldAccent text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                                        <div class="text-xs font-bold text-white">Tuition & Fees</div>
+                                    </button>
+                                    <button onclick="switchTab('analytics')" class="p-3 bg-darkBg/60 hover:bg-goldAccent/10 border gold-border rounded-xl text-left transition-all group">
+                                        <i class="fa-solid fa-chart-pie text-goldAccent text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                                        <div class="text-xs font-bold text-white">Data & Graphs</div>
+                                    </button>
+                                    <button onclick="switchTab('files')" class="p-3 bg-darkBg/60 hover:bg-goldAccent/10 border gold-border rounded-xl text-left transition-all group">
+                                        <i class="fa-solid fa-folder-open text-goldAccent text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                                        <div class="text-xs font-bold text-white">File Manager</div>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-6 p-4 bg-goldAccent/10 rounded-xl border gold-border text-center">
+                                <p class="text-xs font-semibold text-goldAccent">"Consistency is the secret of TUSHAR OS."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAnalyticsHTML() {
+            const totalIncome = tusharState.money.transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
+            const totalExpense = tusharState.money.transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
+            const studyHours = tusharState.study.totalStudyHours;
+            const tuitionCount = tusharState.tuition.students.length;
+            const tasksDone = tusharState.tasks.filter(t => t.completed).length;
+
+            return `
+                <div class="space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">Analytics & Improvement Data</h2>
+                        <p class="text-xs text-gray-400">Visual performance charts and field-wise metrics to track your daily growth.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="glass-panel p-6 rounded-2xl border gold-border space-y-4">
+                            <h3 class="font-bold text-base text-white flex items-center gap-2">
+                                <i class="fa-solid fa-chart-column text-goldAccent"></i> Field-Wise Time & Effort Distribution
+                            </h3>
+                            <p class="text-xs text-gray-400">Proportional breakdown of your active focus areas across Tushar OS.</p>
+                            
+                            <div class="space-y-3 pt-2">
+                                <div>
+                                    <div class="flex justify-between text-xs font-bold mb-1">
+                                        <span class="text-amber-400">Study OS & AI Test Prep</span>
+                                        <span class="text-white">45%</span>
+                                    </div>
+                                    <div class="w-full bg-darkBg rounded-full h-3 border gold-border overflow-hidden">
+                                        <div class="bg-amber-500 h-3 rounded-full" style="width: 45%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs font-bold mb-1">
+                                        <span class="text-blue-400">Tuition Management & Teaching</span>
+                                        <span class="text-white">30%</span>
+                                    </div>
+                                    <div class="w-full bg-darkBg rounded-full h-3 border gold-border overflow-hidden">
+                                        <div class="bg-blue-500 h-3 rounded-full" style="width: 30%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs font-bold mb-1">
+                                        <span class="text-emerald-400">Finance & Income Tracking</span>
+                                        <span class="text-white">15%</span>
+                                    </div>
+                                    <div class="w-full bg-darkBg rounded-full h-3 border gold-border overflow-hidden">
+                                        <div class="bg-emerald-500 h-3 rounded-full" style="width: 15%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs font-bold mb-1">
+                                        <span class="text-purple-400">Routine & Fitness</span>
+                                        <span class="text-white">10%</span>
+                                    </div>
+                                    <div class="w-full bg-darkBg rounded-full h-3 border gold-border overflow-hidden">
+                                        <div class="bg-purple-500 h-3 rounded-full" style="width: 10%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel p-6 rounded-2xl border gold-border space-y-4">
+                            <h3 class="font-bold text-base text-white flex items-center gap-2">
+                                <i class="fa-solid fa-arrow-trend-up text-goldAccent"></i> Weekly Growth & Improvement Metrics
+                            </h3>
+                            <p class="text-xs text-gray-400">Key performance indicators demonstrating your steady personal upgrade.</p>
+
+                            <div class="grid grid-cols-2 gap-4 pt-2">
+                                <div class="p-4 bg-darkBg/60 rounded-xl border gold-border text-center">
+                                    <span class="text-2xl font-extrabold text-goldAccent">${studyHours} hrs</span>
+                                    <p class="text-xs text-gray-400 mt-1">Study Volume</p>
+                                    <span class="text-[10px] text-emerald-400 font-semibold mt-2 inline-block">↑ +12% this week</span>
+                                </div>
+                                <div class="p-4 bg-darkBg/60 rounded-xl border gold-border text-center">
+                                    <span class="text-2xl font-extrabold text-emerald-400">₹${totalIncome.toLocaleString()}</span>
+                                    <p class="text-xs text-gray-400 mt-1">Total Inflows</p>
+                                    <span class="text-[10px] text-emerald-400 font-semibold mt-2 inline-block">↑ On track</span>
+                                </div>
+                                <div class="p-4 bg-darkBg/60 rounded-xl border gold-border text-center">
+                                    <span class="text-2xl font-extrabold text-blue-400">${tuitionCount} Students</span>
+                                    <p class="text-xs text-gray-400 mt-1">Active Learners</p>
+                                    <span class="text-[10px] text-blue-400 font-semibold mt-2 inline-block">Stable batches</span>
+                                </div>
+                                <div class="p-4 bg-darkBg/60 rounded-xl border gold-border text-center">
+                                    <span class="text-2xl font-extrabold text-amber-400">${tasksDone} Tasks</span>
+                                    <p class="text-xs text-gray-400 mt-1">Completed Goals</p>
+                                    <span class="text-[10px] text-amber-400 font-semibold mt-2 inline-block">High productivity</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAppsHTML() {
+            const apps = [
+                { id: 'study', title: 'Study & AI Test OS', desc: 'PDF uploads, notes viewer, smart bookmark & MCQ test generator', icon: 'fa-graduation-cap', color: 'text-amber-400' },
+                { id: 'tuition', title: 'Tuition Manager', desc: 'Student directory, payment history & 5th-date alerts', icon: 'fa-chalkboard-user', color: 'text-emerald-400' },
+                { id: 'analytics', title: 'Analytics & Data', desc: 'Visual graphs and improvement metrics', icon: 'fa-chart-pie', color: 'text-blue-400' },
+                { id: 'money', title: 'Money & Finance', desc: 'Income, expenses, salary & savings', icon: 'fa-wallet', color: 'text-purple-400' },
+                { id: 'routine', title: 'Routine & Habits', desc: 'Daily timeline and habit tracking with delete support', icon: 'fa-calendar-days', color: 'text-rose-400' },
+                { id: 'tasks', title: 'Task Manager', desc: 'Prioritized todo lists with delete/clear options', icon: 'fa-circle-check', color: 'text-cyan-400' },
+                { id: 'files', title: 'File Manager', desc: 'Universal document uploads with category routing', icon: 'fa-folder-open', color: 'text-yellow-400' },
+                { id: 'notifications', title: 'Notifications', desc: 'Alerts and automated monthly fee reminders', icon: 'fa-bell', color: 'text-orange-400' },
+                { id: 'profile', title: 'Profile & ID', desc: 'Personal credentials & avatar upload', icon: 'fa-user-shield', color: 'text-indigo-400' }
+            ];
+
+            return `
+                <div class="space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">Installed Applications</h2>
+                        <p class="text-xs text-gray-400">Launch any module of TUSHAR OS instantly.</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                        ${apps.map(app => `
+                            <div onclick="switchTab('${app.id}')" class="glass-panel p-6 rounded-2xl border gold-border hover:border-goldAccent cursor-pointer transition-all hover:scale-[1.02] group flex items-start space-x-4">
+                                <div class="w-12 h-12 rounded-xl bg-darkBg border gold-border flex items-center justify-center text-xl ${app.color} shadow-md group-hover:bg-goldAccent/10 transition-colors">
+                                    <i class="fa-solid ${app.icon}"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-bold text-white text-base group-hover:text-goldAccent transition-colors">${app.title}</h3>
+                                    <p class="text-xs text-gray-400 mt-1">${app.desc}</p>
+                                    <span class="text-[10px] text-goldAccent font-semibold mt-3 inline-flex items-center gap-1">Open Module <i class="fa-solid fa-arrow-right text-[9px]"></i></span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStudyHTML() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">Study Management OS & AI Test Generator</h2>
+                            <p class="text-xs text-gray-400">Graduation (2023-2027) • Semester 4 • PDF Notes Viewer • Smart Bookmarks • MCQ Test Generator</p>
+                        </div>
+                        <div class="flex gap-3 flex-wrap">
+                            <button onclick="openModal('addSubjectModal')" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs hover:bg-goldHover transition-all">
+                                <i class="fa-solid fa-plus mr-1"></i> Add Subject
+                            </button>
+                            <button onclick="openModal('addNoteModal')" class="px-4 py-2 bg-cardBg border gold-border text-white font-semibold rounded-xl text-xs hover:bg-darkBg transition-all">
+                                <i class="fa-solid fa-file-pdf mr-1"></i> Upload PDF Note
+                            </button>
+                            <button onclick="openModal('aiTestModal')" class="px-4 py-2 bg-gradient-to-r from-amber-600 to-goldAccent text-darkBg font-bold rounded-xl text-xs hover:opacity-90 transition-all shadow-lg">
+                                <i class="fa-solid fa-robot mr-1"></i> AI MCQ Test
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl border gold-border flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-goldAccent/10 border gold-border flex items-center justify-center text-goldAccent text-2xl">
+                                <i class="fa-solid fa-bookmark"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] bg-goldAccent/10 text-goldAccent px-2 py-0.5 rounded font-semibold border gold-border">Smart Study Bookmark</span>
+                                <h3 class="text-lg font-bold text-white mt-1">Currently on Page <span id="bookmarkPageNum" class="text-goldAccent">${tusharState.study.bookmarkPage}</span></h3>
+                                <p class="text-xs text-gray-400">Resume reading right from here next day without losing track.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="updateBookmark(-1)" class="px-3 py-2 bg-cardBg border gold-border text-white rounded-xl text-xs hover:bg-darkBg">- Page</button>
+                            <button onclick="updateBookmark(1)" class="px-3 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs hover:bg-goldHover">+ Page</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-lg text-white mb-4">Semester Subjects</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            ${tusharState.study.subjects.map(sub => `
+                                <div class="glass-panel p-5 rounded-2xl border gold-border relative group">
+                                    <button onclick="deleteSubject(${sub.id})" class="absolute top-4 right-4 text-gray-500 hover:text-rose-400 p-1" title="Delete Subject"><i class="fa-solid fa-trash text-xs"></i></button>
+                                    <div class="mb-2 pr-6">
+                                        <span class="text-[10px] bg-goldAccent/10 text-goldAccent px-2 py-0.5 rounded font-mono">${sub.code}</span>
+                                        <h4 class="font-bold text-white text-base mt-1">${sub.name}</h4>
+                                    </div>
+                                    <div class="w-full bg-darkBg rounded-full h-2 mb-3 overflow-hidden border gold-border">
+                                        <div class="bg-gradient-to-r from-goldAccent to-yellow-600 h-2 rounded-full transition-all duration-500" style="width: ${sub.progress}%"></div>
+                                    </div>
+                                    <div class="flex items-center justify-between text-xs text-gray-400">
+                                        <span>Exam: ${sub.examDate}</span>
+                                        <span class="px-2 py-0.5 bg-darkBg rounded border gold-border text-goldAccent font-semibold">${sub.revision}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-lg text-white">PDF Notes Repository & In-App Viewer</h3>
+                        </div>
+                        <div class="space-y-3">
+                            ${tusharState.study.notes.map(note => `
+                                <div class="p-4 bg-darkBg/60 rounded-xl border gold-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <i class="fa-solid fa-file-pdf text-goldAccent text-lg"></i>
+                                            <h4 class="font-bold text-white text-sm">${note.title}</h4>
+                                            <span class="text-[10px] bg-goldAccent/20 text-goldAccent px-2 py-0.5 rounded">${note.subject}</span>
+                                        </div>
+                                        <p class="text-xs text-gray-300 mt-2">${note.content}</p>
+                                        <div class="text-[10px] text-gray-500 mt-2">File: ${note.pdfName || 'Document.pdf'} • Added on ${note.date}</div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="viewPdfNote(${note.id})" class="px-3 py-1.5 bg-goldAccent text-darkBg font-bold rounded-lg text-xs hover:bg-goldHover transition-all">Read PDF</button>
+                                        <button onclick="deleteNote(${note.id})" class="text-gray-500 hover:text-rose-400 p-2" title="Delete Note"><i class="fa-solid fa-trash text-sm"></i></button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    ${tusharState.study.testResults.length > 0 ? `
+                        <div class="glass-panel p-6 rounded-2xl">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-bold text-lg text-white">AI Test Marksheets & Rank History</h3>
+                                <button onclick="exportMarksheetPDF()" class="px-3 py-1.5 bg-goldAccent/10 text-goldAccent rounded border gold-border hover:bg-goldAccent hover:text-darkBg transition-all text-xs font-semibold">
+                                    <i class="fa-solid fa-download mr-1"></i> Export Marksheet PDF
+                                </button>
+                            </div>
+                            <div class="space-y-3">
+                                ${tusharState.study.testResults.map(res => `
+                                    <div class="p-4 bg-darkBg/60 rounded-xl border gold-border flex items-center justify-between">
+                                        <div>
+                                            <h4 class="font-bold text-white text-sm">${res.subject} (Tested up to Page ${res.pages})</h4>
+                                            <span class="text-[10px] text-goldAccent mt-1 block">Completed on ${res.date}</span>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="text-base font-extrabold text-goldAccent">${res.score} / ${res.total} (${res.percentage}%)</span>
+                                            <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full block mt-1 font-bold">Rank: ${res.rank}</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function renderTuitionHTML() {
+            const totalMonthlyEarnings = tusharState.tuition.students.filter(s => s.feeStatus === 'Paid').reduce((acc, s) => acc + s.monthlyFee, 0);
+            const totalPendingFees = tusharState.tuition.students.filter(s => s.feeStatus === 'Pending').reduce((acc, s) => acc + s.monthlyFee, 0);
+
+            return `
+                <div class="space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">Tuition Management & Payment History</h2>
+                            <p class="text-xs text-gray-400">Student directory, individual payment logs, monthly earnings, and 5th-date alerts</p>
+                        </div>
+                        <button onclick="openModal('addStudentModal')" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs hover:bg-goldHover transition-all">
+                            <i class="fa-solid fa-user-plus mr-1"></i> Add Student
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="glass-panel p-6 rounded-2xl border gold-border">
+                            <span class="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Current Month Tuition Earning</span>
+                            <h3 class="text-3xl font-extrabold text-white mt-2">₹${totalMonthlyEarnings.toLocaleString()}</h3>
+                            <p class="text-xs text-gray-400 mt-1">Collected from Paid students</p>
+                        </div>
+                        <div class="glass-panel p-6 rounded-2xl border gold-border">
+                            <span class="text-xs text-rose-400 font-semibold uppercase tracking-wider">Pending Tuition Dues</span>
+                            <h3 class="text-3xl font-extrabold text-white mt-2">₹${totalPendingFees.toLocaleString()}</h3>
+                            <p class="text-xs text-gray-400 mt-1">Pending fee collection</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <h3 class="font-bold text-lg text-white mb-4">Student Profiles & Payment History</h3>
+                        <div class="space-y-4">
+                            ${tusharState.tuition.students.map(st => `
+                                <div class="p-4 bg-darkBg/60 rounded-xl border gold-border space-y-3">
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                        <div>
+                                            <div class="flex items-center gap-2">
+                                                <h4 class="font-bold text-white text-base">${st.name}</h4>
+                                                <span class="text-[10px] bg-goldAccent/10 text-goldAccent px-2 py-0.5 rounded font-mono">${st.class} (${st.batch})</span>
+                                            </div>
+                                            <p class="text-xs text-gray-400 mt-1">Parent: ${st.parentName} • School: ${st.school} • Phone: ${st.phone}</p>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <span class="px-3 py-1 rounded-full text-xs font-bold ${st.feeStatus === 'Paid' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'}">
+                                                ${st.feeStatus} (₹${st.monthlyFee})
+                                            </span>
+                                            <button onclick="toggleFeeStatus(${st.id})" class="px-3 py-1.5 bg-goldAccent/10 text-goldAccent rounded border gold-border hover:bg-goldAccent hover:text-darkBg transition-all text-xs font-semibold">Toggle Fee</button>
+                                            <button onclick="deleteStudent(${st.id})" class="text-gray-500 hover:text-rose-400 p-1.5" title="Delete Student"><i class="fa-solid fa-trash text-sm"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="pt-3 border-t border-gray-800">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Payment History Logs</span>
+                                            <button onclick="openAddPaymentModal(${st.id})" class="text-[11px] text-goldAccent hover:underline"><i class="fa-solid fa-plus"></i> Add Payment Record</button>
+                                        </div>
+                                        <div class="flex flex-wrap gap-2">
+                                            ${st.paymentHistory.map(ph => `
+                                                <div class="px-3 py-1.5 bg-cardBg rounded-lg border gold-border text-xs flex items-center gap-2">
+                                                    <span class="text-emerald-400 font-bold">₹${ph.amount}</span>
+                                                    <span class="text-gray-400">${ph.date}</span>
+                                                    <span class="text-[10px] bg-darkBg px-1.5 py-0.5 rounded text-goldAccent">${ph.method}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMoneyHTML() {
+            const totalIncome = tusharState.money.transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
+            const totalExpense = tusharState.money.transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
+            const savings = totalIncome - totalExpense;
+
+            return `
+                <div class="space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">Money & Finance OS</h2>
+                            <p class="text-xs text-gray-400">Tuition income, freelance earnings, living expenses and savings tracker</p>
+                        </div>
+                        <button onclick="openModal('addTransactionModal')" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs hover:bg-goldHover transition-all">
+                            <i class="fa-solid fa-plus mr-1"></i> Add Transaction
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div class="glass-panel p-6 rounded-2xl border gold-border">
+                            <span class="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Total Income</span>
+                            <h3 class="text-3xl font-extrabold text-white mt-2">₹${totalIncome.toLocaleString()}</h3>
+                            <p class="text-xs text-gray-400 mt-1">Tuition Fees & Freelance</p>
+                        </div>
+                        <div class="glass-panel p-6 rounded-2xl border gold-border">
+                            <span class="text-xs text-rose-400 font-semibold uppercase tracking-wider">Total Expenses</span>
+                            <h3 class="text-3xl font-extrabold text-white mt-2">₹${totalExpense.toLocaleString()}</h3>
+                            <p class="text-xs text-gray-400 mt-1">Rent, Food, Books & Bills</p>
+                        </div>
+                        <div class="glass-panel p-6 rounded-2xl border gold-border gold-glow">
+                            <span class="text-xs text-goldAccent font-semibold uppercase tracking-wider">Net Savings</span>
+                            <h3 class="text-3xl font-extrabold text-goldAccent mt-2">₹${savings.toLocaleString()}</h3>
+                            <p class="text-xs text-gray-400 mt-1">Healthy Financial Balance</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <h3 class="font-bold text-lg text-white mb-4">Transaction History</h3>
+                        <div class="space-y-3">
+                            ${tusharState.money.transactions.map(tx => `
+                                <div class="flex items-center justify-between p-4 bg-darkBg/60 rounded-xl border gold-border">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold ${tx.type === 'income' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}">
+                                            <i class="fa-solid ${tx.type === 'income' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-white text-sm">${tx.title}</h4>
+                                            <span class="text-[10px] text-gray-400 bg-cardBg px-2 py-0.5 rounded mt-1 inline-block">${tx.category} • ${tx.date}</span>
+                                        </div>
+                                    </div>
+                                    <span class="font-bold text-base ${tx.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">
+                                        ${tx.type === 'income' ? '+' : '-'}₹${tx.amount.toLocaleString()}
+                                    </span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRoutineHTML() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">Routine & Habits OS</h2>
+                            <p class="text-xs text-gray-400">Daily editable timeline and consistent habit streak tracker with delete support</p>
+                        </div>
+                        <button onclick="openModal('addTimelineModal')" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs hover:bg-goldHover transition-all">
+                            <i class="fa-solid fa-plus mr-1"></i> Add Timeline Item
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 glass-panel p-6 rounded-2xl">
+                            <h3 class="font-bold text-lg text-white mb-4 flex items-center justify-between">
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-clock text-goldAccent"></i> Daily Master Timeline</span>
+                                <span class="text-xs text-gray-400">Editable / Deletable</span>
+                            </h3>
+                            <div class="space-y-4 border-l-2 border-goldAccent/30 pl-4 ml-2">
+                                ${tusharState.routine.timeline.map(item => `
+                                    <div class="relative flex items-center justify-between p-3 bg-darkBg/60 rounded-xl border gold-border">
+                                        <div class="absolute -left-[27px] top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-goldAccent border-2 border-darkBg"></div>
+                                        <div>
+                                            <span class="text-xs font-mono font-bold text-goldAccent">${item.time}</span>
+                                            <h4 class="font-bold text-white text-sm mt-0.5">${item.task}</h4>
+                                        </div>
+                                        <button onclick="deleteRoutineItem(${item.id})" class="text-gray-500 hover:text-rose-400 p-1"><i class="fa-solid fa-trash text-xs"></i></button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-lg text-white mb-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-fire text-goldAccent"></i> Daily Habits
+                                </h3>
+                                <div class="space-y-3">
+                                    ${tusharState.routine.habits.map(habit => `
+                                        <div class="flex items-center justify-between p-3.5 bg-darkBg/60 rounded-xl border gold-border">
+                                            <div>
+                                                <h4 class="font-bold text-white text-sm">${habit.name}</h4>
+                                                <span class="text-[10px] text-goldAccent">🔥 ${habit.streak} days streak</span>
+                                            </div>
+                                            <input type="checkbox" ${habit.completedToday ? 'checked' : ''} onchange="toggleHabit(${habit.id})" class="w-4 h-4 rounded text-goldAccent focus:ring-goldAccent bg-cardBg border-gray-700 cursor-pointer">
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <div class="mt-6 p-4 bg-goldAccent/10 rounded-xl border gold-border text-center">
+                                <p class="text-xs font-semibold text-goldAccent">"We are what we repeatedly do."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTasksHTML() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">Task Manager</h2>
+                            <p class="text-xs text-gray-400">Organize your daily tasks, clear old tasks, and add new priorities</p>
+                        </div>
+                        <button onclick="openModal('addTaskModal')" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs hover:bg-goldHover transition-all">
+                            <i class="fa-solid fa-plus mr-1"></i> Add New Task
+                        </button>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <div class="space-y-3">
+                            ${tusharState.tasks.map(task => `
+                                <div class="flex items-center justify-between p-4 bg-darkBg/60 rounded-xl border ${task.completed ? 'border-gray-800 opacity-60' : 'gold-border'}">
+                                    <div class="flex items-center space-x-3">
+                                        <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})" class="w-4 h-4 rounded text-goldAccent focus:ring-goldAccent bg-cardBg border-gray-700 cursor-pointer">
+                                        <div>
+                                            <h4 class="font-bold text-sm ${task.completed ? 'line-through text-gray-500' : 'text-white'}">${task.title}</h4>
+                                            <div class="flex items-center gap-2 mt-1">
+                                                <span class="text-[10px] px-2 py-0.5 bg-goldAccent/10 text-goldAccent rounded">${task.category}</span>
+                                                <span class="text-[10px] px-2 py-0.5 bg-rose-500/10 text-rose-400 rounded">${task.priority} Priority</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <span class="text-xs text-gray-400 font-mono">${task.date}</span>
+                                        <button onclick="deleteTask(${task.id})" class="text-gray-500 hover:text-rose-400 p-1.5" title="Delete Task"><i class="fa-solid fa-trash text-sm"></i></button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFilesHTML() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">Universal File Manager</h2>
+                            <p class="text-xs text-gray-400">All folders active. Upload files with automatic category routing into correct folders.</p>
+                        </div>
+                        <button onclick="openModal('uploadFileModal')" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs hover:bg-goldHover transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-upload"></i> Upload & Route Document
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        ${['Study', 'Tuition', 'Income', 'Documents', 'Images', 'Projects', 'Archive'].map(folder => `
+                            <div onclick="filterFolderFiles('${folder}')" class="glass-panel p-5 rounded-2xl border gold-border hover:border-goldAccent cursor-pointer transition-all flex items-center space-x-3 group">
+                                <i class="fa-solid fa-folder text-goldAccent text-2xl group-hover:scale-110 transition-transform"></i>
+                                <div>
+                                    <h4 class="font-bold text-white text-sm">${folder}</h4>
+                                    <p class="text-[10px] text-gray-400">${tusharState.files.filter(f => f.folder === folder).length} files</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <h3 class="font-bold text-lg text-white mb-4">All Uploaded Files & Categorized Documents</h3>
+                        <div class="space-y-3">
+                            ${tusharState.files.map(file => `
+                                <div class="flex items-center justify-between p-4 bg-darkBg/60 rounded-xl border gold-border">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fa-solid fa-file-lines text-goldAccent text-lg"></i>
+                                        <div>
+                                            <h4 class="font-bold text-white text-sm">${file.name}</h4>
+                                            <span class="text-[10px] text-gray-400"><span class="text-goldAccent font-semibold">${file.folder}</span> • ${file.size} • ${file.date}</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <button onclick="showToast('Opening file viewer...')" class="px-3 py-1.5 bg-goldAccent/10 text-goldAccent rounded border gold-border hover:bg-goldAccent hover:text-darkBg transition-all text-xs font-semibold">View</button>
+                                        <button onclick="deleteFile(${file.id})" class="text-gray-500 hover:text-rose-400 p-1.5"><i class="fa-solid fa-trash text-xs"></i></button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderNotificationsHTML() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">Notification Center</h2>
+                            <p class="text-xs text-gray-400">Centralized system alerts, automated monthly fee reminders on the 5th and task notifications</p>
+                        </div>
+                        <button onclick="markAllNotificationsRead()" class="px-4 py-2 bg-cardBg border gold-border text-white font-semibold rounded-xl text-xs hover:bg-darkBg transition-all">
+                            Mark All as Read
+                        </button>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <div class="space-y-3">
+                            ${tusharState.notifications.map(n => `
+                                <div class="p-4 bg-darkBg/60 rounded-xl border ${n.read ? 'border-gray-800 opacity-70' : 'gold-border'} flex items-start justify-between">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-8 h-8 rounded-full bg-goldAccent/10 text-goldAccent border gold-border flex items-center justify-center mt-0.5">
+                                            <i class="fa-solid fa-bell text-xs"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-white text-sm">${n.title}</h4>
+                                            <p class="text-xs text-gray-300 mt-1">${n.message}</p>
+                                            <span class="text-[10px] text-gray-500 mt-2 inline-block">${n.time}</span>
+                                        </div>
+                                    </div>
+                                    ${!n.read ? '<span class="w-2.5 h-2.5 rounded-full bg-goldAccent"></span>' : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProfileHTML() {
+            return `
+                <div class="space-y-6 max-w-3xl mx-auto">
+                    <div class="glass-panel p-8 rounded-3xl border gold-border gold-glow relative overflow-hidden text-center">
+                        <div class="relative w-24 h-24 mx-auto mb-4 group">
+                            <div class="w-24 h-24 rounded-full bg-gradient-to-br from-goldAccent to-yellow-700 flex items-center justify-center text-darkBg font-extrabold text-4xl shadow-xl border-2 border-white overflow-hidden">
+                                ${tusharState.user.avatar ? `<img src="${tusharState.user.avatar}" class="w-full h-full object-cover">` : 'TK'}
+                            </div>
+                            <label class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-xs font-bold">
+                                <i class="fa-solid fa-camera mr-1"></i> Change
+                                <input type="file" accept="image/*" onchange="handleAvatarUpload(event)" class="hidden">
+                            </label>
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-white">${tusharState.user.name}</h2>
+                        <p class="text-goldAccent text-sm font-semibold mt-1">${tusharState.user.title}</p>
+                        <p class="text-gray-400 text-xs mt-2">${tusharState.user.education}</p>
+
+                        <div class="mt-6 pt-6 border-t gold-border text-left grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-4 bg-darkBg/60 rounded-xl border gold-border">
+                                <h4 class="text-xs font-bold text-goldAccent uppercase mb-1">Skills & Stack</h4>
+                                <p class="text-xs text-gray-300">${tusharState.user.skills}</p>
+                            </div>
+                            <div class="p-4 bg-darkBg/60 rounded-xl border gold-border">
+                                <h4 class="text-xs font-bold text-goldAccent uppercase mb-1">Core Goal</h4>
+                                <p class="text-xs text-gray-300">${tusharState.user.goals}</p>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-center">
+                            <button onclick="openModal('editProfileModal')" class="px-5 py-2.5 bg-goldAccent text-darkBg font-bold rounded-xl text-xs hover:bg-goldHover transition-all">
+                                Edit Profile Credentials
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSettingsHTML() {
+            return `
+                <div class="space-y-6 max-w-3xl mx-auto">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">OS Settings & Data Backup</h2>
+                        <p class="text-xs text-gray-400">Manage offline local storage backup, export/import JSON data, theme & security</p>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl space-y-4">
+                        <h3 class="font-bold text-base text-white border-b gold-border pb-3">Theme & Aesthetics</h3>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-bold text-white text-sm">Active OS Theme</h4>
+                                <p class="text-xs text-gray-400">Premium Dark (#0B0B0D) + Rich Gold (#C6A15B)</p>
+                            </div>
+                            <span class="px-3 py-1 bg-goldAccent/20 text-goldAccent rounded-lg text-xs font-bold border gold-border">Gold Active</span>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl space-y-4">
+                        <h3 class="font-bold text-base text-white border-b gold-border pb-3">Data Backup & Sync</h3>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <button onclick="exportData()" class="flex-1 py-3 bg-goldAccent text-darkBg font-bold rounded-xl text-xs hover:bg-goldHover transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-download"></i> Export JSON Backup
+                            </button>
+                            <label class="flex-1 py-3 bg-cardBg border gold-border text-white font-semibold rounded-xl text-xs hover:bg-darkBg transition-all flex items-center justify-center gap-2 cursor-pointer">
+                                <i class="fa-solid fa-upload"></i> Import Backup
+                                <input type="file" accept=".json" onchange="importData(event)" class="hidden">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl space-y-4">
+                        <h3 class="font-bold text-base text-white border-b gold-border pb-3">Danger Zone</h3>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-bold text-white text-sm">Reset Tushar OS State</h4>
+                                <p class="text-xs text-gray-400">Restores default mock data for all modules.</p>
+                            </div>
+                            <button onclick="resetOSState()" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl text-xs transition-all">
+                                Reset OS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal(modalId) {
+            let modalHTML = '';
+            if (modalId === 'addSubjectModal') {
+                modalHTML = `
+                    <div id="dynamicModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div class="glass-panel p-6 rounded-2xl max-w-md w-full border gold-border space-y-4">
+                            <h3 class="font-bold text-lg text-white">Add New Subject</h3>
+                            <input type="text" id="subNameInput" placeholder="Subject Name..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="text" id="subCodeInput" placeholder="Subject Code (e.g., CS205)..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="date" id="subExamDateInput" class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button onclick="closeDynamicModal()" class="px-4 py-2 bg-cardBg text-white rounded-xl text-xs">Cancel</button>
+                                <button onclick="saveNewSubject()" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs">Add Subject</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (modalId === 'addNoteModal') {
+                modalHTML = `
+                    <div id="dynamicModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div class="glass-panel p-6 rounded-2xl max-w-md w-full border gold-border space-y-4">
+                            <h3 class="font-bold text-lg text-white">Upload PDF Study Note</h3>
+                            <input type="text" id="noteTitleInput" placeholder="Note Title (e.g. Chapter 3 Trees)..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="text" id="noteSubjectInput" placeholder="Subject Name..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="file" id="pdfFileInput" accept=".pdf,.txt" class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <textarea id="noteContentInput" rows="3" placeholder="Summary or note text content..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none"></textarea>
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button onclick="closeDynamicModal()" class="px-4 py-2 bg-cardBg text-white rounded-xl text-xs">Cancel</button>
+                                <button onclick="saveNewNote()" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs">Upload Note</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (modalId === 'aiTestModal') {
+                modalHTML = `
+                    <div id="dynamicModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div class="glass-panel p-6 rounded-2xl max-w-md w-full border gold-border space-y-4">
+                            <h3 class="font-bold text-lg text-white flex items-center gap-2"><i class="fa-solid fa-robot text-goldAccent"></i> AI Objective MCQ Test Generator</h3>
+                            <p class="text-xs text-gray-400">Generate an objective MCQ test based on your notes up to your studied page limit.</p>
+                            <input type="text" id="testSubjectInput" placeholder="Subject Name..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="number" id="testPagesInput" placeholder="Pages Studied (e.g. up to page 5)..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button onclick="closeDynamicModal()" class="px-4 py-2 bg-cardBg text-white rounded-xl text-xs">Cancel</button>
+                                <button onclick="startAITestSession()" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs">Start MCQ Test</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (modalId === 'addTaskModal') {
+                modalHTML = `
+                    <div id="dynamicModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div class="glass-panel p-6 rounded-2xl max-w-md w-full border gold-border space-y-4">
+                            <h3 class="font-bold text-lg text-white">Add New Task</h3>
+                            <input type="text" id="taskTitleInput" placeholder="Task title..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <select id="taskCategoryInput" class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                                <option value="Study">Study</option>
+                                <option value="Tuition">Tuition</option>
+                                <option value="Personal">Personal</option>
+                            </select>
+                            <select id="taskPriorityInput" class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                                <option value="High">High Priority</option>
+                                <option value="Medium">Medium Priority</option>
+                                <option value="Low">Low Priority</option>
+                            </select>
+                            <input type="date" id="taskDateInput" class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button onclick="closeDynamicModal()" class="px-4 py-2 bg-cardBg text-white rounded-xl text-xs">Cancel</button>
+                                <button onclick="saveNewTask()" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs">Add Task</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (modalId === 'addTimelineModal') {
+                modalHTML = `
+                    <div id="dynamicModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div class="glass-panel p-6 rounded-2xl max-w-md w-full border gold-border space-y-4">
+                            <h3 class="font-bold text-lg text-white">Add Routine Timeline Item</h3>
+                            <input type="text" id="timeInput" placeholder="Time (e.g. 07:00 AM)..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="text" id="routineTaskInput" placeholder="Activity / Task description..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button onclick="closeDynamicModal()" class="px-4 py-2 bg-cardBg text-white rounded-xl text-xs">Cancel</button>
+                                <button onclick="saveNewRoutineItem()" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs">Add Item</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (modalId === 'addTransactionModal') {
+                modalHTML = `
+                    <div id="dynamicModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div class="glass-panel p-6 rounded-2xl max-w-md w-full border gold-border space-y-4">
+                            <h3 class="font-bold text-lg text-white">Add Transaction</h3>
+                            <input type="text" id="txTitleInput" placeholder="Transaction title..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <select id="txTypeInput" class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
+                            </select>
+                            <input type="number" id="txAmountInput" placeholder="Amount (₹)..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="text" id="txCategoryInput" placeholder="Category..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button onclick="closeDynamicModal()" class="px-4 py-2 bg-cardBg text-white rounded-xl text-xs">Cancel</button>
+                                <button onclick="saveNewTransaction()" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs">Save Transaction</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (modalId === 'addStudentModal') {
+                modalHTML = `
+                    <div id="dynamicModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div class="glass-panel p-6 rounded-2xl max-w-md w-full border gold-border space-y-4">
+                            <h3 class="font-bold text-lg text-white">Add Tuition Student</h3>
+                            <input type="text" id="stNameInput" placeholder="Student Name..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="text" id="stParentInput" placeholder="Parent Name..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="text" id="stClassInput" placeholder="Class..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="text" id="stSchoolInput" placeholder="School Name..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="text" id="stBatchInput" placeholder="Batch..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="text" id="stPhoneInput" placeholder="Phone..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="number" id="stFeeInput" placeholder="Monthly Fee (₹)..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button onclick="closeDynamicModal()" class="px-4 py-2 bg-cardBg text-white rounded-xl text-xs">Cancel</button>
+                                <button onclick="saveNewStudent()" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs">Add Student</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (modalId === 'uploadFileModal') {
+                modalHTML = `
+                    <div id="dynamicModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div class="glass-panel p-6 rounded-2xl max-w-md w-full border gold-border space-y-4">
+                            <h3 class="font-bold text-lg text-white">Upload File with Category Routing</h3>
+                            <input type="text" id="uploadFileNameInput" placeholder="File Name..." class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <select id="uploadFolderInput" class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                                <option value="Study">Study</option>
+                                <option value="Tuition">Tuition</option>
+                                <option value="Income">Income</option>
+                                <option value="Documents">Documents</option>
+                                <option value="Images">Images</option>
+                                <option value="Projects">Projects</option>
+                                <option value="Archive">Archive</option>
+                            </select>
+                            <input type="file" id="actualFileInput" class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button onclick="closeDynamicModal()" class="px-4 py-2 bg-cardBg text-white rounded-xl text-xs">Cancel</button>
+                                <button onclick="saveRoutedFile()" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs">Upload & Route</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (modalId === 'editProfileModal') {
+                modalHTML = `
+                    <div id="dynamicModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                        <div class="glass-panel p-6 rounded-2xl max-w-md w-full border gold-border space-y-4">
+                            <h3 class="font-bold text-lg text-white">Edit Profile</h3>
+                            <input type="text" id="editNameInput" value="${tusharState.user.name}" class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="text" id="editTitleInput" value="${tusharState.user.title}" class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="text" id="editEduInput" value="${tusharState.user.education}" class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <input type="text" id="editSkillsInput" value="${tusharState.user.skills}" class="w-full bg-darkBg border gold-border rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button onclick="closeDynamicModal()" class="px-4 py-2 bg-cardBg text-white rounded-xl text-xs">Cancel</button>
+                                <button onclick="saveProfileChanges()" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs">Save Profile</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (modalId === 'globalSearchModal') {
+                document.getElementById('globalSearchModal').classList.remove('hidden');
+                return;
+            } else {
+                return;
+            }
+
+            const div = document.createElement('div');
+            div.id = 'dynamicModalContainer';
+            div.innerHTML = modalHTML;
+            document.body.appendChild(div);
+        }
+
+        function closeModal(modalId) {
+            if (modalId === 'globalSearchModal') {
+                document.getElementById('globalSearchModal').classList.add('hidden');
+            }
+        }
+
+        function closeDynamicModal() {
+            const el = document.getElementById('dynamicModalContainer');
+            if (el) el.remove();
+        }
+
+        function updateBookmark(change) {
+            tusharState.study.bookmarkPage = Math.max(1, tusharState.study.bookmarkPage + change);
+            saveState();
+            renderTabContent(activeTab);
+            showToast(`Bookmark saved to Page ${tusharState.study.bookmarkPage}`);
+        }
+
+        function saveNewSubject() {
+            const name = document.getElementById('subNameInput').value;
+            const code = document.getElementById('subCodeInput').value;
+            const examDate = document.getElementById('subExamDateInput').value || '2026-05-30';
+            if(!name) { showToast("Please enter subject name", "error"); return; }
+            tusharState.study.subjects.push({ id: Date.now(), name, code: code || 'CS101', sem: 'Sem 4', progress: 0, examDate, notesCount: 0, revision: 'Pending' });
+            saveState();
+            closeDynamicModal();
+            renderTabContent(activeTab);
+            showToast("Subject added successfully!");
+        }
+
+        function deleteSubject(id) {
+            tusharState.study.subjects = tusharState.study.subjects.filter(s => s.id !== id);
+            saveState();
+            renderTabContent(activeTab);
+            showToast("Subject deleted successfully!");
+        }
+
+        function saveNewNote() {
+            const title = document.getElementById('noteTitleInput').value;
+            const subject = document.getElementById('noteSubjectInput').value;
+            const content = document.getElementById('noteContentInput').value;
+            const fileInput = document.getElementById('pdfFileInput');
+            const pdfName = fileInput.files[0] ? fileInput.files[0].name : "Uploaded_Notes.pdf";
+
+            if(!title) { showToast("Please enter note title", "error"); return; }
+            tusharState.study.notes.unshift({ id: Date.now(), title, subject: subject || 'General', content: content || 'PDF Document uploaded successfully.', pdfName, date: new Date().toISOString().split('T')[0] });
+            saveState();
+            closeDynamicModal();
+            renderTabContent(activeTab);
+            showToast("PDF Note uploaded successfully!");
+        }
+
+        function deleteNote(id) {
+            tusharState.study.notes = tusharState.study.notes.filter(n => n.id !== id);
+            saveState();
+            renderTabContent(activeTab);
+            showToast("Note deleted successfully!");
+        }
+
+        function viewPdfNote(id) {
+            const note = tusharState.study.notes.find(n => n.id === id);
+            if(!note) return;
+            const modalHTML = `
+                <div id="dynamicModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+                    <div class="glass-panel p-6 rounded-2xl max-w-2xl w-full border gold-border space-y-4 max-h-[90vh] overflow-y-auto">
+                        <div class="flex items-center justify-between border-b gold-border pb-3">
+                            <h3 class="font-bold text-lg text-white"><i class="fa-solid fa-file-pdf text-goldAccent mr-2"></i> ${note.title} (${note.pdfName})</h3>
+                            <button onclick="closeDynamicModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                        </div>
+                        <div class="p-4 bg-darkBg rounded-xl border gold-border text-sm text-gray-200 leading-relaxed font-mono whitespace-pre-wrap">
+                            [PDF In-App Viewer Mode]\n\nSubject: ${note.subject}\nDate: ${note.date}\n\nContent Preview:\n${note.content}\n\n(Bookmarked at Page ${tusharState.study.bookmarkPage})
+                        </div>
+                        <div class="flex justify-end gap-3 pt-2">
+                            <button onclick="updateBookmark(1); showToast('Progress bookmarked!'); closeDynamicModal();" class="px-4 py-2 bg-goldAccent text-darkBg font-bold rounded-xl text-xs">Bookmark Page & Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            const div = document.createElement('div');
+            div.id = 'dynamicModalContainer';
+            div.innerHTML = modalHTML;
+            document.body.appendChild(div);
+        }
+
+        let currentTestQuestions = [];
+        let currentTestSubject = "";
+        let currentTestPages = 1;
+
+        function startAITestSession() {
+            const subject = document.getElementById('testSubjectInput').value || 'General Study';
+            const pages = parseInt(document.getElementById('testPagesInput').value) || tusharState.study.bookmarkPage;
+            closeDynamicModal();
+
+            currentTestSubject = subject;
+            currentTestPages = pages;
+            currentTestQuestions = [
+                { q: "What is the primary time complexity of balanced Binary Search Tree operations?", options: ["O(n)", "O(log n)", "O(n^2)", "O(1)"], correct: 1 },
+                { q: "Which normal form removes transitive dependencies?", options: ["1NF", "2NF", "3NF", "BCNF"], correct: 2 },
+                { q: "In operating systems, what is a deadlock prevention condition?", options: ["Mutual Exclusion", "Infinite loop", "High CPU usage", "Low memory"], correct: 0 }
+            ];
+
+            renderTestSessionUI(0, 0);
+        }
+
+        function renderTestSessionUI(questionIndex, currentScore) {
+            if(questionIndex >= currentTestQuestions.length) {
+                // Finish test
+                const percentage = (currentScore / currentTestQuestions.length) * 100;
+                const rank = percentage >= 90 ? "Rank 1 (Gold)" : percentage >= 70 ? "Rank 2 (Silver)" : "Rank 3";
+
+                tusharState.study.testResults.unshift({
+                    id: Date.now(),
+                    subject: currentTestSubject,
+                    pages: currentTestPages,
+                    score: currentScore,
+                    total: currentTestQuestions.length,
+                    percentage,
+                    rank,
+                    date: new Date().toISOString().split('T')[0]
+                });
+                saveState();
+                renderTabContent(activeTab);
+
+                showToast(`Test Completed! Score: ${currentScore}/${currentTestQuestions.length} (${percentage}%) — ${rank}`);
+                return;
+            }
+
+            const qObj = currentTestQuestions[questionIndex];
+            const modalHTML = `
+                <div id="dynamicModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+                    <div class="glass-panel p-6 rounded-2xl max-w-lg w-full border gold-border space-y-6">
+                        <div class="flex items-center justify-between border-b gold-border pb-3">
+                            <h3 class="font-bold text-base text-white">AI Objective Test (${currentTestSubject})</h3>
+                            <span class="text-xs bg-goldAccent/20 text-goldAccent px-2 py-1 rounded font-bold">Q ${questionIndex + 1} of ${currentTestQuestions.length}</span>
+                        </div>
+                        <p class="text-white text-base font-semibold">${qObj.q}</p>
+                        <div class="space-y-3">
+                            ${qObj.options.map((opt, i) => `
+                                <button onclick="answerTestQuestion(${questionIndex}, ${i}, ${currentScore})" class="w-full text-left p-3.5 bg-darkBg hover:bg-goldAccent/20 border gold-border rounded-xl text-sm text-gray-200 transition-all font-medium">
+                                    ${String.fromCharCode(65 + i)}. ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+            const div = document.createElement('div');
+            div.id = 'dynamicModalContainer';
+            div.innerHTML = modalHTML;
+            document.body.appendChild(div);
+        }
+
+        function answerTestQuestion(qIndex, selectedOption, currentScore) {
+            const qObj = currentTestQuestions[qIndex];
+            let newScore = currentScore;
+            if(selectedOption === qObj.correct) {
+                newScore++;
+                showToast("Correct Answer!", "success");
+            } else {
+                showToast("Incorrect Answer", "error");
+            }
+            closeDynamicModal();
+            renderTestSessionUI(qIndex + 1, newScore);
+        }
+
+        function exportMarksheetPDF() {
+            showToast("Generating Marksheet PDF Summary...");
+            setTimeout(() => {
+                const latest = tusharState.study.testResults[0];
+                if(!latest) { showToast("No test results found", "error"); return; }
+                const blob = new Blob([`TUSHAR OS - OFFICIAL MARKSHEET\n===============================\nStudent: ${tusharState.user.name}\nSubject: ${latest.subject}\nTested Pages: up to Page ${latest.pages}\nScore: ${latest.score} / ${latest.total} (${latest.percentage}%)\nRank: ${latest.rank}\nDate: ${latest.date}\n===============================\nVerified by Tushar OS AI Evaluation Engine`], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Marksheet_${latest.subject}_${latest.date}.txt`;
+                a.click();
+                showToast("Marksheet exported successfully!");
+            }, 1000);
+        }
+
+        function saveNewStudent() {
+            const name = document.getElementById('stNameInput').value;
+            const parentName = document.getElementById('stParentInput').value;
+            const studentClass = document.getElementById('stClassInput').value;
+            const school = document.getElementById('stSchoolInput').value;
+            const batch = document.getElementById('stBatchInput').value;
+            const phone = document.getElementById('stPhoneInput').value;
+            const monthlyFee = parseFloat(document.getElementById('stFeeInput').value) || 1000;
+            if(!name) { showToast("Please enter student name", "error"); return; }
+
+            tusharState.tuition.students.unshift({
+                id: Date.now(),
+                name,
+                parentName,
+                class: studentClass,
+                school,
+                batch,
+                phone,
+                monthlyFee,
+                feeStatus: "Pending",
+                dueDate: "2026-04-10",
+                paymentHistory: []
+            });
+            saveState();
+            closeDynamicModal();
+            renderTabContent(activeTab);
+            showToast("Student added successfully!");
+        }
+
+        function deleteStudent(id) {
+            tusharState.tuition.students = tusharState.tuition.students.filter(s => s.id !== id);
+            saveState();
+            renderTabContent(activeTab);
+            showToast("Student deleted successfully!");
+        }
+
+        function toggleFeeStatus(id) {
+            const st = tusharState.tuition.students.find(s => s.id === id);
+            if(st) {
+                st.feeStatus = st.feeStatus === 'Paid' ? 'Pending' : 'Paid';
+                if (st.feeStatus === 'Paid') {
+                    st.paymentHistory.unshift({
+                        date: new Date().toISOString().split('T')[0],
+                        amount: st.monthlyFee,
+                        method: "UPI / Cash",
+                        status: "Paid"
+                    });
+                }
+                saveState();
+                renderTabContent(activeTab);
+                showToast("Fee status & payment log updated!");
+            }
+        }
+
+        function openAddPaymentModal(studentId) {
+            const amount = prompt("Enter payment amount (₹):", "1000");
+            if(!amount) return;
+            const method = prompt("Enter payment method (UPI / Cash / Online):", "UPI / Online");
+            const st = tusharState.tuition.students.find(s => s.id === studentId);
+            if(st) {
+                st.paymentHistory.unshift({
+                    date: new Date().toISOString().split('T')[0],
+                    amount: parseFloat(amount),
+                    method: method || 'UPI',
+                    status: 'Paid'
+                });
+                st.feeStatus = 'Paid';
+                saveState();
+                renderTabContent(activeTab);
+                showToast("Payment record added successfully!");
+            }
+        }
+
+        function saveRoutedFile() {
+            const name = document.getElementById('uploadFileNameInput').value;
+            const folder = document.getElementById('uploadFolderInput').value;
+            const fileInput = document.getElementById('actualFileInput');
+            const fileName = fileInput.files[0] ? fileInput.files[0].name : (name || "Document.pdf");
+
+            tusharState.files.unshift({
+                id: Date.now(),
+                name: fileName,
+                folder,
+                size: "2.1 MB",
+                date: new Date().toISOString().split('T')[0]
+            });
+            saveState();
+            closeDynamicModal();
+            renderTabContent(activeTab);
+            showToast(`File successfully uploaded & routed to folder [${folder}]!`);
+        }
+
+        function deleteFile(id) {
+            tusharState.files = tusharState.files.filter(f => f.id !== id);
+            saveState();
+            renderTabContent(activeTab);
+            showToast("File deleted successfully!");
+        }
+
+        function filterFolderFiles(folderName) {
+            const matching = tusharState.files.filter(f => f.folder === folderName);
+            showToast(`Showing ${matching.length} files in folder: ${folderName}`);
+        }
+
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                tusharState.user.avatar = e.target.result;
+                saveState();
+                updateAvatars();
+                renderTabContent(activeTab);
+                showToast("Profile picture updated successfully!");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveProfileChanges() {
+            tusharState.user.name = document.getElementById('editNameInput').value;
+            tusharState.user.title = document.getElementById('editTitleInput').value;
+            tusharState.user.education = document.getElementById('editEduInput').value;
+            tusharState.user.skills = document.getElementById('editSkillsInput').value;
+            saveState();
+            closeDynamicModal();
+            renderTabContent(activeTab);
+            startClock();
+            showToast("Profile credentials updated successfully!");
+        }
+
+        function toggleTask(id) {
+            const task = tusharState.tasks.find(t => t.id === id);
+            if(task) {
+                task.completed = !task.completed;
+                saveState();
+                renderTabContent(activeTab);
+                showToast("Task status updated!");
+            }
+        }
+
+        function deleteTask(id) {
+            tusharState.tasks = tusharState.tasks.filter(t => t.id !== id);
+            saveState();
+            renderTabContent(activeTab);
+            showToast("Task deleted successfully!");
+        }
+
+        function saveNewTask() {
+            const title = document.getElementById('taskTitleInput').value;
+            const category = document.getElementById('taskCategoryInput').value;
+            const priority = document.getElementById('taskPriorityInput').value;
+            const date = document.getElementById('taskDateInput').value || new Date().toISOString().split('T')[0];
+            if(!title) { showToast("Please enter task title", "error"); return; }
+            tusharState.tasks.unshift({ id: Date.now(), title, category, priority, date, completed: false });
+            saveState();
+            closeDynamicModal();
+            renderTabContent(activeTab);
+            showToast("New task added successfully!");
+        }
+
+        function deleteRoutineItem(id) {
+            tusharState.routine.timeline = tusharState.routine.timeline.filter(item => item.id !== id);
+            saveState();
+            renderTabContent(activeTab);
+            showToast("Routine item deleted successfully!");
+        }
+
+        function saveNewRoutineItem() {
+            const time = document.getElementById('timeInput').value;
+            const task = document.getElementById('routineTaskInput').value;
+            if(!time || !task) { showToast("Please fill time and task", "error"); return; }
+            tusharState.routine.timeline.push({ id: Date.now(), time, task, type: "custom" });
+            saveState();
+            closeDynamicModal();
+            renderTabContent(activeTab);
+            showToast("Routine schedule updated successfully!");
+        }
+
+        function saveNewTransaction() {
+            const title = document.getElementById('txTitleInput').value;
+            const type = document.getElementById('txTypeInput').value;
+            const amount = parseFloat(document.getElementById('txAmountInput').value);
+            const category = document.getElementById('txCategoryInput').value || 'General';
+            if(!title || isNaN(amount)) { showToast("Please fill valid details", "error"); return; }
+            tusharState.money.transactions.unshift({ id: Date.now(), title, type, amount, category, date: new Date().toISOString().split('T')[0] });
+            saveState();
+            closeDynamicModal();
+            renderTabContent(activeTab);
+            showToast("Transaction saved successfully!");
+        }
+
+        function toggleHabit(id) {
+            const h = tusharState.routine.habits.find(item => item.id === id);
+            if(h) {
+                h.completedToday = !h.completedToday;
+                if(h.completedToday) h.streak += 1;
+                else h.streak = Math.max(0, h.streak - 1);
+                saveState();
+                renderTabContent(activeTab);
+                showToast("Habit streak updated!");
+            }
+        }
+
+        function handleGlobalSearch(query) {
+            const q = query.toLowerCase().trim();
+            const resultsEl = document.getElementById('globalSearchResults');
+            if(!q) {
+                resultsEl.innerHTML = `<p class="text-xs text-gray-500 text-center py-6">Type anything to search across Tushar OS...</p>`;
+                return;
+            }
+
+            let matches = [];
+            tusharState.tasks.forEach(t => { if(t.title.toLowerCase().includes(q)) matches.push({type: 'Task', title: t.title, desc: `${t.category} • ${t.date}`}); });
+            tusharState.tuition.students.forEach(s => { if(s.name.toLowerCase().includes(q) || s.class.toLowerCase().includes(q)) matches.push({type: 'Student', title: s.name, desc: `${s.class} • Batch ${s.batch}`}); });
+            tusharState.study.subjects.forEach(sub => { if(sub.name.toLowerCase().includes(q)) matches.push({type: 'Subject', title: sub.name, desc: `${sub.code} • ${sub.sem}`}); });
+            tusharState.money.transactions.forEach(tx => { if(tx.title.toLowerCase().includes(q)) matches.push({type: 'Transaction', title: tx.title, desc: `₹${tx.amount} • ${tx.category}`}); });
+
+            if(matches.length === 0) {
+                resultsEl.innerHTML = `<p class="text-xs text-gray-400 text-center py-6">No matching records found for "${query}"</p>`;
+                return;
+            }
+
+            resultsEl.innerHTML = matches.map(m => `
+                <div class="p-3 bg-darkBg/60 rounded-xl border gold-border flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] bg-goldAccent/10 text-goldAccent px-2 py-0.5 rounded font-mono">${m.type}</span>
+                        <h4 class="font-bold text-white text-sm mt-1">${m.title}</h4>
+                        <p class="text-[10px] text-gray-400 mt-0.5">${m.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tusharState, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", `TUSHAR_OS_Backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+            showToast("Tushar OS backup exported successfully!");
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    tusharState = parsed;
+                    saveState();
+                    renderTabContent(activeTab);
+                    updateAvatars();
+                    showToast("Tushar OS restored successfully from backup!");
+                } catch(err) {
+                    showToast("Invalid JSON backup file", "error");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetOSState() {
+            if(confirm("Are you sure you want to reset Tushar OS to default state?")) {
+                tusharState = defaultState;
+                saveState();
+                renderTabContent('home');
+                updateAvatars();
+                showToast("Tushar OS reset to factory defaults.");
+            }
+        }
+
+        function updateNotificationBadge() {
+            const unread = tusharState.notifications.filter(n => !n.read).length;
+            const badge = document.getElementById('mobileNotifBadge');
+            if(badge) {
+                if(unread > 0) badge.classList.remove('hidden');
+                else badge.classList.add('hidden');
+            }
+        }
+
+        function markAllNotificationsRead() {
+            tusharState.notifications.forEach(n => n.read = true);
+            saveState();
+            renderTabContent(activeTab);
+            showToast("All notifications marked as read.");
+        }
+
+        window.onload = function() {
+            checkMonthlyFeeAlert();
+            startClock();
+            switchTab('home');
+            updateNotificationBadge();
+        };
+    </script>
+</body>
+</html>
